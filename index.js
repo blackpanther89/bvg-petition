@@ -2,27 +2,29 @@ const express = require('express');
 const app = express();
 const db = require('./db');
 var hb = require('express-handlebars');
+const cookieSession = require('cookie-session');
+const bodyParser = require('body-parser');
+const csurf = require('csurf');
 app.use(express.static('./public'));
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
-app.get('/wintergreen-Petition', (req, res) => {
-    //this is just for demo purposes
-    db
-        .getAllCities()
-        .then(results => {
-            //results.rows -- rows is the property that stores rhe results
-            //of our query ie it will contain a list of cities
-            //results would contain all the cities in our teble
-            //but of course this won't work right now
-            // because we dont have a cities table
-        })
-        .catch(err => {
-            console.log('err  in getAllCities', err);
-        });
-});
 
-app.post('/create-new-city', (res, req) => {
-    db.addCity('Berlin', 'Berlin').then(() => {});
+app.use(
+    cookieSession({
+        secret: `I'm always angry.`,
+        maxAge: 1000 * 60 * 60 * 24 * 14,
+    }),
+);
+app.use(
+    bodyParser.urlencoded({
+        extended: false,
+    }),
+);
+app.use(csurf());
+app.use((req, res, next) => {
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.locals.csrfToken = req.csrfToken();
+    next();
 });
 
 app.get('/wintergreen-petition', (req, res) => {
@@ -38,7 +40,37 @@ app.get('/petition', (req, res) => {
         layout: 'main',
     });
 });
-app.post('/wintergreen-petition', (req, res) => {
-    res.render;
+
+// app.get('/signatures', (req, res) => {
+//     res.render('signatures', {
+//         layout: 'main',
+//     });
+// });
+
+app.get('/signatures', (req, res) => {
+    db.listSignatures().then(results => {
+        res.render({list: results});
+    });
 });
+
+app.get('/thanks', (req, res) => {
+    res.render('thanks', {
+        layout: 'main',
+    });
+});
+
+app.post('/petition', (req, res) => {
+    return db
+        .getDetails(req.body.firstName, req.body.lastName, req.body.signature)
+        .then(data => {
+            req.session.id = data.rows[0].id;
+            res.redirect('/thanks');
+        });
+    // .then(results => {
+    //     if (results) req.render('petition', {message: 'done'});
+    //     else res.render('petition', {error: 'Please register '});
+    // })
+    // .catch(err => console.log(err));
+});
+
 app.listen(8080, () => console.log('Petition liestening!'));
