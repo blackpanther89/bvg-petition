@@ -1,0 +1,9 @@
+<h1 class="signatures"> List Signers</h1>
+{{#listNames}}
+<li>{{firstname}} {{lastname}}</li>
+{{/listNames}}
+
+<form method="post">
+    <input name='_csrf' type='hidden' value='{{csrfToken}}'>
+
+</form>
