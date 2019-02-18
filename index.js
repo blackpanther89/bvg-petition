@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
-const db = require('./db');
-var hb = require('express-handlebars');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const csurf = require('csurf');
+
+const db = require('./db');
+var hb = require('express-handlebars');
+
 app.use(express.static('./public'));
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
@@ -27,6 +29,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// app.get('/register');
 app.get('/wintergreen-petition', (req, res) => {
     res.render('home', {
         message: 'Welcome',
@@ -35,24 +38,21 @@ app.get('/wintergreen-petition', (req, res) => {
     });
 });
 
+//render petition page
 app.get('/petition', (req, res) => {
     res.render('petition', {
         layout: 'main',
     });
 });
 
-// app.get('/signatures', (req, res) => {
-//     res.render('signatures', {
-//         layout: 'main',
-//     });
-// });
-
+//render signatures page
 app.get('/signatures', (req, res) => {
     db.listSignatures().then(results => {
         res.render({list: results});
     });
 });
 
+//render thank you page
 app.get('/thanks', (req, res) => {
     res.render('thanks', {
         layout: 'main',
@@ -63,14 +63,16 @@ app.post('/petition', (req, res) => {
     return db
         .getDetails(req.body.firstName, req.body.lastName, req.body.signature)
         .then(data => {
-            req.session.id = data.rows[0].id;
+            console.log(req.session);
+
             res.redirect('/thanks');
-        });
-    // .then(results => {
-    //     if (results) req.render('petition', {message: 'done'});
-    //     else res.render('petition', {error: 'Please register '});
-    // })
-    // .catch(err => console.log(err));
+        })
+        .catch(err =>
+            res.render('petition', {
+                layout: 'main',
+                error: 'error',
+            }));
+    console.log(err);
 });
 
 app.listen(8080, () => console.log('Petition liestening!'));

@@ -1,11 +1,17 @@
-<h1>Welcome</h1>
-<p>my petition</p>
+<h1>Welcome to my petition  </h1>
+<p>I have no subject idea for my petiton :'( </p>
+
+      {{#if error}}
+      <h2 class="error">  Please enter your name </h2>
+
+          {{/if}}
+
 
 <form method="POST" >
-    <input type="text" name="First Name" placeholder="First Name">
-    <input type="text" name="Last Name" placeholder="Last Name">
-    <input name="signature"type="hidden">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="text" name="firstName" placeholder="First Name">
+    <input type="text" name="lastName" placeholder="Last Name">
+    <input name="signature" type="hidden">
+    <input  id= "input" type="hidden" name="_csrf" value="{{csrfToken}}">
     <canvas id="canvas" width="300" height="100"></canvas>
     <button id="register">Register</button>
 
