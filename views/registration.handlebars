@@ -9,6 +9,7 @@
     <input type="text" name="lastName" placeholder="Last Name">
     <input type="text" name="email" placeholder="Email Adress">
     <input type="password" name="password" placeholder="Password">
-    <button id="signup">SIGN UP</button>
-<h5>if you are alredy a member please, <a href="/login">log in</a></h5>.
+   <input type="hidden" name="_csrf" value="{{csrfToken}}">
+   <button id="signup">SIGN UP</button>
+<h5>If you are alredy a member please, <a href="/login">log in</a></h5>.
 </form>

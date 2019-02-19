@@ -1,4 +1,11 @@
 <h1 class='login'>Please log in</h1>
+{{#if error}}
+<h2 class="error">  Please register </h2>
+
+    {{/if}}</h2>
+<form class="" method="POST">
 <input type="text" name="email" placeholder="Email Adress">
 <input type="text" name="password"placeholder="Password">
+<input type="hidden" name="_csrf" value="{{csrfToken}}">
 <button id="login">LOG IN</button>
+</form>

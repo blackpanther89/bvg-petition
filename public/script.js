@@ -4,7 +4,7 @@
     var canvas = document.getElementById('canvas');
 
     var ctx = canvas.getContext('2d');
-    var input = document.getElementById('input');
+    var input = document.querySelector('.canvas');
     var register = document.getElementById('register');
 
     ctx.strokeStyle = 'black';
@@ -38,5 +38,6 @@
 
     register.addEventListener(`click`, () => {
         input.value = canvas.toDataURL();
+        console.log(input.value);
     });
 })();
