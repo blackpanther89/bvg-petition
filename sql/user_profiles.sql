@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS user_profiles;
 CREATE TABLE user_profiles(
     id  SERIAL primary key,
     age INT,
@@ -5,4 +6,4 @@ CREATE TABLE user_profiles(
     url VARCHAR(300),
     user_id not null unique
 
-)
+);

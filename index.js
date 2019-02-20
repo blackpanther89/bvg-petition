@@ -63,13 +63,15 @@ app.post('/petition', (req, res) => {
     console.log(req.body);
     return db
         .createSignature(
-            req.body.firstName,
-            req.body.lastName,
+            //no longer need to pass the first and last to query
+            // req.body.firstName,
+            // req.body.lastName,
+
             req.body.signature,
         )
         .then(({rows}) => {
-            req.session.firstName = req.body.firstName;
-            req.session.lastName = req.body.lastName;
+            // req.session.firstName = req.body.firstName;
+            // req.session.lastName = req.body.lastName;
             req.session.signatureId = rows[0].id;
             console.log(req.session);
 
@@ -118,29 +120,33 @@ app.get('/registration', (req, res) => {
 });
 
 app.post('/registration', (req, res) => {
-    console.log(req.body);
-    bcrypt.hashPassword(req.body.password);
-    return db
-        .register(
-            req.body.firstName,
-            req.body.lastName,
-            req.body.email,
-            password,
-        )
-        .then(({rows}) => {
-            req.session.firstName = req.body.firstName;
-            req.session.lastName = req.body.lastName;
-            req.session.email = req.body.email;
-            req.session.userId = results.rows[0].id;
-            console.log(req.session);
+    console.log('req.body:', req.body.firstName);
+    bcrypt.hashPassword(req.body.password).then(hash => {
+        console.log('hash:', hash);
+        db
+            .register(
+                req.body.firstName,
+                req.body.lastName,
+                req.body.email,
+                hash,
+            )
+            .then(results => {
+                // console.log('hello');
 
-            res.redirect('/petiton');
-        })
-        .catch(err =>
-            res.render('registration', {
-                layout: 'main',
-                error: 'error',
-            }));
+                req.session.firstName = req.body.firstName;
+                req.session.lastName = req.body.lastName;
+                req.session.email = req.body.email;
+                req.session.userId = results.rows[0].id;
+                console.log(req.session);
+                res.redirect('/profile');
+            })
+            .catch(err =>
+                res.render('registration', {
+                    layout: 'main',
+                    error: 'error',
+                }));
+    });
+
     // console.log('error:', error);
 });
 
@@ -152,77 +158,44 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    db
-        .getEmail(req.body.email)
-        .then(data => {
-            return bcrypt.compare(req.body.password, results.rows[0].password);
-            res.redirect('/petiton');
-        })
-        .catch(err =>
-            res.render('registration', {
-                layout: 'main',
-                error: 'error',
-            }));
-    console.log(err);
+    db.getEmail(req.body.email).then(results => {
+        req.session.userId = results.rows[0].id;
+        bcrypt
+            .checkPassword(req.body.password, results.rows[0].password)
+            .then(match => {
+                if (match) {
+                    db.getSignature(req.session.userId).then(results => {
+                        res.redirect('/petition');
+                    });
+                } else {
+                    res.render('login', {
+                        layout: 'main',
+                        error: 'error',
+                    });
+                }
+            })
+            .catch(err =>
+                res.render('login', {
+                    layout: 'main',
+                    error: 'error',
+                }));
+    });
 });
 
+// renders form for data that goes into  new user_profiles table
 app.get('/profile', (req, res) => {
     res.render('profile', {
         layout: 'main',
     });
 });
 
-// app.post('/registration', (req, res) => {
-//     //     return bcrypt.hash(req.body.password).then(hashPassword=>
-//     //     db
-//     //         .register(
-//     //             req.body.firstName,
-//     //             req.body.lastName,
-//     //             req.body.email,
-//     //
-//     //         )
-//     //         .then(results => {
-//     //             req.session.firstName = req.body.firstname;
-//     //             req.session.lastName = req.body.lastname;
-//     //             req.session.email = req.body.email;
-//     //             req.session.userID = results.rows[0].id;
-//     //             console.log(req.session);
-//     //
-//     //             res.redirect('/petition');
-//     //         })
-//     //         .catch(err =>
-//     //             res.render('registration', {
-//     //                 layout: 'main',
-//     //                 error: 'error',
-//     //             }))
-//     //     console.log( 'error:', error);
-//     // })
-//     //  {
-//     return db
-//         .register(req.body.firstName, req.body.lastName, req.body.email)
-//         .then(data => {
-//             console.log(req.session);
-//             res.redirect('/profile');
-//         })
-//         .catch(err =>
-//             res.render('registration', {
-//                 layout: 'main',
-//                 error: 'error',
-//             }));
-//     console.log(err);
-// });
-// app.post('/login', (req, res) => {
-//     return db
-//         .login(req.session.id)
-//         .then(data => {
-//             console.log(req.session);
-//             res.redirect('/petiton');
-//         })
-//         .catch(err =>
-//             res.render('registration', {
-//                 layout: 'main',
-//                 error: 'error',
-//             }));
-//     console.log(err);
-// });
+app.post('/profile', (req, res) => {});
+
+app.get('/signers/:city', (req, res) => {
+    return db.userInfo(city).then(results => {
+        res.render('signerscity', {
+            layout: 'main',
+        });
+    });
+});
 app.listen(8080, () => console.log('Petition liestening!'));
