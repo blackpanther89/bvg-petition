@@ -35,11 +35,11 @@ app.use(function(req, res, next) {
 
 // ==== DEVELOPER ROUTES === //
 
-app.get('/getSignatures', (req, res) => {
-    return db.getSignatures().then(({rows}) => {
-        res.send(rows);
-    });
-});
+// app.get('/getSignatures', (req, res) => {
+//     return db.getSignatures().then(({rows}) => {
+//         res.send(rows);
+//     });
+// });
 // ==== DEVELOPER ROUTES === //
 
 //====ROUTES====//
@@ -68,30 +68,32 @@ app.post('/petition', (req, res) => {
             // req.body.lastName,
 
             req.body.signature,
+            req.session.userId,
         )
-        .then(({rows}) => {
+        .then(results => {
             // req.session.firstName = req.body.firstName;
             // req.session.lastName = req.body.lastName;
-            req.session.signatureId = rows[0].id;
+            req.session.signatureId = results.rows[0].id;
             console.log(req.session);
 
             res.redirect('/thanks');
         })
-        .catch(err =>
+        .catch(err => {
+            console.log('err:', err);
             res.render('petition', {
                 layout: 'main',
                 error: 'error',
-            }));
-    console.log(err.message);
+            });
+        });
 });
 
 //render thank you page
 app.get('/thanks', (req, res) => {
     return db.getSignature(req.session.signatureId).then(results => {
-        console.log(results);
+        console.log('results:', results);
         res.render('thanks', {
             layout: 'main',
-            signature: results.rows[0].signature,
+            signature: results.rows[0],
         });
     });
 });
@@ -107,7 +109,7 @@ app.get('/signatures', (req, res) => {
             });
             console.log(results.rows);
         })
-        .catch(err => {
+        .catch(error => {
             console.log('error:', error);
         });
 });
@@ -159,13 +161,16 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     db.getEmail(req.body.email).then(results => {
-        req.session.userId = results.rows[0].id;
+        // req.session.userId = results.rows[0].id;
         bcrypt
             .checkPassword(req.body.password, results.rows[0].password)
             .then(match => {
                 if (match) {
+                    req.session.userId = results.rows[0].id;
+                    req.session.firstName = results.rows[0].firstName;
+                    req.session.lastName = results.rows[0].lastName;
                     db.getSignature(req.session.userId).then(results => {
-                        res.redirect('/petition');
+                        res.redirect('/profile');
                     });
                 } else {
                     res.render('login', {
@@ -189,13 +194,29 @@ app.get('/profile', (req, res) => {
     });
 });
 
-app.post('/profile', (req, res) => {});
+app.post('/profile', (req, res) => {
+    console.log('req.session :', req.session.userId);
+    return db
+        .userInfo(req.body.age, req.body.city, req.body.url, req.session.userId)
+        .then(results => {
+            // req.session.userId = results.rows[0].id;
+            res.redirect('/petition');
+        })
+        .catch(error => {
+            console.log(error);
+            res.render('profile', {
+                layout: 'main',
+                error: 'error',
+            });
+        });
+});
 
-app.get('/signers/:city', (req, res) => {
-    return db.userInfo(city).then(results => {
+app.get('/signatures/:city', (req, res) => {
+    return db.getCity(re.params.city).then(results => {
         res.render('signerscity', {
             layout: 'main',
+            listNames: results.rows,
         });
     });
 });
-app.listen(8080, () => console.log('Petition liestening!'));
+app.listen(8080, () => console.log('Petition listening!'));

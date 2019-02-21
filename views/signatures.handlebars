@@ -1,9 +1,19 @@
 <h1 class="signatures"> List Signers</h1>
+
 {{#listNames}}
-<li>{{firstname}} {{lastname}}</li>
+
+    {{#if url}}
+        <a href="{{url}}" target="blank">
+            <li>{{firstName}} {{lastName}}</li>
+        </a>
+    {{else}}
+        <li>{{firstName}} {{lastName}}</li>
+    {{/if}}
+    {{age}}
+    <a href="signatures/:{{city}}">{{city}}</a>
 {{/listNames}}
 
 <form method="post">
-       <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
 </form>
