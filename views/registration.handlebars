@@ -1,15 +1,30 @@
-<h1 class="registration"> blabala</h1>
+
+<h1 class="registration"> Free public transport in Berlin <br>Sign Up Now! </h1>
+
 {{#if error}}
     <h2 class="error"> Please register </h2>
 
 {{/if}}</h2>
 
 <form method="POST">
+    <br>
+    <br>
     <input type="text" name="firstName" placeholder="First Name">
+    <br>
     <input type="text" name="lastName" placeholder="Last Name">
+    <br>
+
     <input type="text" name="email" placeholder="Email Adress">
+    <br>
+
     <input type="password" name="password" placeholder="Password">
+    <br>
+
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <br>
+
     <button id="button">SIGN UP</button>
-    <h5>If you are alredy a member please, <a href="/login">log in</a></h5>.
+    <br>
+    <br>
+    <h5>If you are alredy a member please, <a class="log" href="/login">log in</a></h5>.
 </form>

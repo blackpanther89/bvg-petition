@@ -1,5 +1,5 @@
 <h1>Welcome to my petition </h1>
-<p>I have no subject idea for my petiton :'( </p>
+
 
 {{#if error}}
     <h2 class="error"> error </h2>
@@ -11,8 +11,14 @@
     <!-- <input type="text" name="firstName" placeholder="First Name">
     <input type="text" name="lastName" placeholder="Last Name"> -->
     <input class="canvas" name="signature" type="hidden">
+    <br>
+
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <br>
+
     <canvas id="canvas" width="300" height="100"></canvas>
+
+
     <button type="submit" id="button">Register</button>
 
 </form>

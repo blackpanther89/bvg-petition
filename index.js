@@ -31,12 +31,12 @@ app.use((req, res, next) => {
 });
 
 // protect Petition against CSRF attacks
-// app.use(csurf());
-//
-// app.use(function(req, res, next) {
-//     res.locals.csrfToken = req.csrfToken();
-//     next();
-// });
+app.use(csurf());
+
+app.use(function(req, res, next) {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 devRoutes(app);
 

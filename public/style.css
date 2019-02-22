@@ -1,6 +1,12 @@
-body{
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    background-image: url(architecture-berlin-europe-1255149.jpg) ;
+body {
+    text-align: center;
+    background-image: url(architecture-berlin-europe-1255149.jpg);
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -8,7 +14,18 @@ body{
 }
 
 h1 {
+    font: 20px Verdana;
+    margin-top: 0px;
+    background-color: yellow;
+    line-height: 45px;
     text-align: center;
+}
+
+h5 {
+    color: black;
+    margin-top: 50px;
+    opacity: 0.6;
+    font: bold 15px Verdana;
 }
 
 p {
@@ -16,9 +33,18 @@ p {
 }
 
 input {
-    border-radius: 20px;
+    opacity: 0.6;
     margin: auto;
     display: block;
+}
+
+.log {
+    color: black;
+}
+
+.h {
+    font-family: Verdana;
+    color: black;
 }
 
 #canvas {
@@ -30,11 +56,32 @@ input {
 
 #button {
     margin-top: 50px;
-    border-radius:12px 0 12px 0;
-	background: #478bf9;
-	border:none;
-	color:yellow;
-	font:bold 12px Verdana;
-	padding:6px 0 6px 0;
-    margin-left: 580px;
+    border-radius: 12px 0 12px 0;
+    background: yellow;
+    border: none;
+    color: black;
+    width: 100px;
+    font: bold 12px Verdana;
+    padding: 6px 0 6px 0;
+    border-bottom: : 20px;
+}
+
+#sign {
+    margin-top: 50px;
+    border-radius: 12px 0 12px 0;
+    background: yellow;
+    border: none;
+    color: black;
+    width: 150px;
+    font: bold 12px Verdana;
+    padding: 6px 0 6px 0;
+    border-bottom: : 20px;
+}
+
+footer {
+    font-size: 20px;
+    font-style: italic;
+    opacity: 0.5;
+    line-height: 30px;
+    margin-top: 100px;
 }

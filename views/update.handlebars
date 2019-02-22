@@ -1,12 +1,30 @@
 <h1>Edit your profile</h1>
 <form class="" method="POST">
-<input type="text" value="{{firstname}}" name="firstname" placeholder="First Name">
-<input type="text" value="{{lastname}}" name="lastname" placeholder="Last Name">
-<input type="text" value="{{email}}" name="email" placeholder="Email Adress">
-<input type="password" name="password" placeholder="Password">
-<input class="input" type="text" value="{{#if age}}{{age}}{{/if}}" name="age" placeholder="Age">
-<input type="text" value="{{#if city}}{{city}}{{/if}}" name="city" placeholder="City">
-<input type="url" value="{{#if url}}{{url}}{{/if}}" name="url" placeholder="Homepage">
-<input class="input" type="hidden" name="_csrf" value="{{csrfToken}}">
-<button id="button"> UPDATE</button>
+    <br>
+    <br>
+    <input type="text" value="{{firstname}}" name="firstname" placeholder="First Name">
+    <br>
+
+    <input type="text" value="{{lastname}}" name="lastname" placeholder="Last Name">
+    <br>
+
+    <input type="text" value="{{email}}" name="email" placeholder="Email Adress">
+    <br>
+
+    <input type="password" name="password" placeholder="Password">
+    <br>
+
+    <input class="input" type="text" value="{{#if age}}{{age}}{{/if}}" name="age" placeholder="Age">
+    <br>
+
+    <input type="text" value="{{#if city}}{{city}}{{/if}}" name="city" placeholder="City">
+    <br>
+
+    <input type="url" value="{{#if url}}{{url}}{{/if}}" name="url" placeholder="Homepage">
+    <br>
+
+    <input class="input" type="hidden" name="_csrf" value="{{csrfToken}}">
+    <br>
+
+    <button id="button"> UPDATE</button>
 </form>
