@@ -9,7 +9,7 @@ const bcrypt = require('./bcrypt');
 const db = require('./db');
 var hb = require('express-handlebars');
 var devRoutes = require('./devRoutes');
-
+const helpers = require('./helpers');
 app.use(express.static('./public'));
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
@@ -136,7 +136,7 @@ app.post('/login', (req, res) => {
 });
 
 //render petition page
-app.get('/petition', (req, res) => {
+app.get('/petition', helpers.gotoThanksIfSigned, (req, res) => {
     res.render('petition', {
         layout: 'main',
     });
@@ -173,10 +173,11 @@ app.post('/petition', (req, res) => {
 //render thank you page
 app.get('/thanks', (req, res) => {
     return db.getSignature(req.session.userId).then(results => {
-        // console.log('results:', results);
+        console.log('results.rows:', results.rows);
+
         res.render('thanks', {
             layout: 'main',
-            signature: results.rows[0],
+            signature: results.rows[0].signature,
         });
     });
 });
