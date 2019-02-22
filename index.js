@@ -25,14 +25,18 @@ app.use(
         extended: false,
     }),
 );
-
-// protect Petition against CSRF attacks
-app.use(csurf());
-
-app.use(function(req, res, next) {
-    res.locals.csrfToken = req.csrfToken();
+app.use((req, res, next) => {
+    console.log('req.session', req.session);
     next();
 });
+
+// protect Petition against CSRF attacks
+// app.use(csurf());
+//
+// app.use(function(req, res, next) {
+//     res.locals.csrfToken = req.csrfToken();
+//     next();
+// });
 
 devRoutes(app);
 
@@ -54,9 +58,9 @@ app.get('/registration', (req, res) => {
 });
 
 app.post('/registration', (req, res) => {
-    console.log('req.body:', req.body.firstName);
+    // console.log('req.body:', req.body.firstName);
     bcrypt.hashPassword(req.body.password).then(hash => {
-        console.log('hash:', hash);
+        // console.log('hash:', hash);
         db
             .register(
                 req.body.firstName,
@@ -71,7 +75,7 @@ app.post('/registration', (req, res) => {
                 req.session.lastName = req.body.lastName;
                 req.session.email = req.body.email;
                 req.session.userId = results.rows[0].id;
-                console.log(req.session);
+                // console.log(req.session);
                 res.redirect('/profile');
             })
             .catch(err =>
@@ -101,20 +105,32 @@ app.post('/login', (req, res) => {
                     req.session.userId = results.rows[0].id;
                     req.session.firstName = results.rows[0].firstName;
                     req.session.lastName = results.rows[0].lastName;
-                    db.getSignature(req.session.userId).then(results => {
-                        res.redirect('/thanks');
-                    });
+                    db
+                        .getSignature(req.session.userId)
+                        .then(results => {
+                            if (results.rows.length === 0) {
+                                req.session.signed = false;
+                            } else {
+                                req.session.signed = true;
+                            }
+                            return res.redirect('/petition');
+                        })
+                        .catch(e =>
+                            res.render('login', {
+                                layout: 'main',
+                                error: e.message,
+                            }));
                 } else {
                     res.render('login', {
                         layout: 'main',
-                        error: 'error',
+                        error: 'Wrong credentials',
                     });
                 }
             })
-            .catch(err =>
+            .catch(e =>
                 res.render('login', {
                     layout: 'main',
-                    error: 'error',
+                    error: e.message,
                 }));
     });
 });
@@ -127,7 +143,7 @@ app.get('/petition', (req, res) => {
 });
 
 app.post('/petition', (req, res) => {
-    console.log('req.body.signature:', req.body.signature);
+    // console.log('req.body.signature:', req.body.signature);
     return db
         .createSignature(
             //no longer need to pass the first and last to query
@@ -141,12 +157,12 @@ app.post('/petition', (req, res) => {
             // req.session.firstName = req.body.firstName;
             // req.session.lastName = req.body.lastName;
             req.session.signatureId = results.rows[0].id;
-            console.log('results.rowsfqfqqfqf:', results.rows);
+            // console.log('results.rowsfqfqqfqf:', results.rows);
 
             res.redirect('/thanks');
         })
         .catch(err => {
-            console.log('err:', err);
+            // console.log('err:', err);
             res.render('petition', {
                 layout: 'main',
                 error: 'error',
@@ -157,7 +173,7 @@ app.post('/petition', (req, res) => {
 //render thank you page
 app.get('/thanks', (req, res) => {
     return db.getSignature(req.session.userId).then(results => {
-        console.log('results:', results);
+        // console.log('results:', results);
         res.render('thanks', {
             layout: 'main',
             signature: results.rows[0],
@@ -174,10 +190,10 @@ app.get('/signatures', (req, res) => {
                 layout: 'main',
                 listNames: results.rows,
             });
-            console.log(results.rows);
+            // console.log(results.rows);
         })
         .catch(error => {
-            console.log('error:', error);
+            // console.log('error:', error);
         });
 });
 
@@ -189,7 +205,7 @@ app.get('/profile', (req, res) => {
 });
 
 app.post('/profile', (req, res) => {
-    console.log('req.session :', req.session.userId);
+    // console.log('req.session :', req.session.userId);
     return db
         .userInfo(req.body.age, req.body.city, req.body.url, req.session.userId)
         .then(results => {
@@ -197,7 +213,7 @@ app.post('/profile', (req, res) => {
             res.redirect('/petition');
         })
         .catch(error => {
-            console.log(error);
+            // console.log(error);
             res.render('profile', {
                 layout: 'main',
                 error: 'error',
@@ -213,4 +229,10 @@ app.get('/signatures/:city', (req, res) => {
         });
     });
 });
+
+app.get('/logout', (req, res) => {
+    req.session = null;
+    res.redirect('/registration');
+});
+
 app.listen(8080, () => console.log('Petition listening!'));
