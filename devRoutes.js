@@ -37,4 +37,11 @@ module.exports = function(app) {
             .then(data => res.send('done'))
             .catch(e => res.send(e.message));
     });
+
+    app.get('/getSignaturesPlus', (req, res) => {
+        return db
+            .getSignaturesPlus()
+            .then(data => res.send(data.rows))
+            .catch(e => res.send(e.message));
+    });
 };

@@ -1,14 +1,14 @@
 <h1>Now please tell us just a little bit more about yourself.</h1>
 
 {{#if error}}
-<h2 class="error">  something went wrong  </h2>
+<h2 class="error">  {{error}}  </h2>
 
     {{/if}}</h2>
 
 <form class=""  method="POST">
 <input type="hidden" name="_csrf" value="{{csrfToken}}">
-<input type="text" name="Age" value="" placeholder="Age">
-<input type="text" name="City" value="" placeholder="City">
-<input type="url" name="Homepage" value="" placeholder="Homepage">
+<input type="text" name="age" value="" placeholder="Age">
+<input type="text" name="city" value="" placeholder="City">
+<input type="url" name="homepage" value="" placeholder="Homepage">
 <button type="submit" id="button"> Continue</button>
 </form>

@@ -2,7 +2,8 @@
 var spicedPg = require('spiced-pg');
 
 var db = spicedPg(
-    'postgres:postgres:postgres@localhost:5432/wintergreen-petition',
+    process.env.DATABASE_URL ||
+        'postgres:postgres:postgres@localhost:5432/wintergreen-petition',
 );
 
 exports.createSignature = function createSignature(
@@ -16,10 +17,12 @@ exports.createSignature = function createSignature(
         [signature, user_id],
     );
 };
-module.exports.getSignatures = function getSignatures() {
+module.exports.getSignaturesPlus = function getSignaturesPlus() {
     return db.query(
-        `SELECT firstName, lastName, age, city, url FROM users
-        LEFT JOIN user_profiles ON users.id =  user_profiles.user_id`,
+        `SELECT * FROM signatures
+         LEFT JOIN users ON signatures.user_id = users.id
+         LEFT JOIN user_profiles ON signatures.user_id = user_profiles.user_id
+         `,
     );
 };
 
@@ -94,11 +97,9 @@ exports.createProfiles = function createProfiles() {
         age INT,
         city VARCHAR(255),
         url VARCHAR(300),
-        user_id INT REFERENCES users(id) not null unique)`
+        user_id INT REFERENCES users(id) not null unique)`,
     );
 };
-
-
 
 exports.refresh = function refresh() {
     return db.query(

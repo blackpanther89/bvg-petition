@@ -173,8 +173,6 @@ app.post('/petition', (req, res) => {
 //render thank you page
 app.get('/thanks', (req, res) => {
     return db.getSignature(req.session.userId).then(results => {
-        console.log('results.rows:', results.rows);
-
         res.render('thanks', {
             layout: 'main',
             signature: results.rows[0].signature,
@@ -185,8 +183,9 @@ app.get('/thanks', (req, res) => {
 //render signatures page
 app.get('/signatures', (req, res) => {
     db
-        .getSignatures()
+        .getSignaturesPlus()
         .then(results => {
+            // console.log('results.rows:', results.rows);
             res.render('signatures', {
                 layout: 'main',
                 listNames: results.rows,
@@ -206,18 +205,18 @@ app.get('/profile', (req, res) => {
 });
 
 app.post('/profile', (req, res) => {
-    // console.log('req.session :', req.session.userId);
+    console.log('req.body :', req.body);
     return db
         .userInfo(req.body.age, req.body.city, req.body.url, req.session.userId)
         .then(results => {
             // req.session.userId = results.rows[0].id;
             res.redirect('/petition');
         })
-        .catch(error => {
+        .catch(e => {
             // console.log(error);
             res.render('profile', {
                 layout: 'main',
-                error: 'error',
+                error: e.message,
             });
         });
 });
@@ -230,10 +229,14 @@ app.get('/signatures/:city', (req, res) => {
         });
     });
 });
-
+app.get('/update', (req, res) => {
+    res.render('update', {
+        layout: 'main',
+    });
+});
 app.get('/logout', (req, res) => {
     req.session = null;
     res.redirect('/registration');
 });
 
-app.listen(8080, () => console.log('Petition listening!'));
+app.listen(process.env.PORT || 8080, () => console.log('Petition listening!'));
