@@ -8,6 +8,7 @@ const bcrypt = require('./bcrypt');
 
 const db = require('./db');
 var hb = require('express-handlebars');
+var devRoutes = require('./devRoutes');
 
 app.use(express.static('./public'));
 app.engine('handlebars', hb());
@@ -33,16 +34,9 @@ app.use(function(req, res, next) {
     next();
 });
 
-// ==== DEVELOPER ROUTES === //
+devRoutes(app);
 
-// app.get('/getSignatures', (req, res) => {
-//     return db.getSignatures().then(({rows}) => {
-//         res.send(rows);
-//     });
-// });
-// ==== DEVELOPER ROUTES === //
-
-//====ROUTES====//
+// PROFILES
 
 app.get('/wintergreen-petition', (req, res) => {
     res.render('home', {
@@ -50,68 +44,6 @@ app.get('/wintergreen-petition', (req, res) => {
         subheading: 'Welcome to my petition',
         layout: 'main',
     });
-});
-
-//render petition page
-app.get('/petition', (req, res) => {
-    res.render('petition', {
-        layout: 'main',
-    });
-});
-
-app.post('/petition', (req, res) => {
-    console.log(req.body);
-    return db
-        .createSignature(
-            //no longer need to pass the first and last to query
-            // req.body.firstName,
-            // req.body.lastName,
-
-            req.body.signature,
-            req.session.userId,
-        )
-        .then(results => {
-            // req.session.firstName = req.body.firstName;
-            // req.session.lastName = req.body.lastName;
-            req.session.signatureId = results.rows[0].id;
-            console.log(req.session);
-
-            res.redirect('/thanks');
-        })
-        .catch(err => {
-            console.log('err:', err);
-            res.render('petition', {
-                layout: 'main',
-                error: 'error',
-            });
-        });
-});
-
-//render thank you page
-app.get('/thanks', (req, res) => {
-    return db.getSignature(req.session.signatureId).then(results => {
-        console.log('results:', results);
-        res.render('thanks', {
-            layout: 'main',
-            signature: results.rows[0],
-        });
-    });
-});
-
-//render signatures page
-app.get('/signatures', (req, res) => {
-    db
-        .getSignatures()
-        .then(results => {
-            res.render('signatures', {
-                layout: 'main',
-                listNames: results.rows,
-            });
-            console.log(results.rows);
-        })
-        .catch(error => {
-            console.log('error:', error);
-        });
 });
 
 //render the registration page
@@ -170,7 +102,7 @@ app.post('/login', (req, res) => {
                     req.session.firstName = results.rows[0].firstName;
                     req.session.lastName = results.rows[0].lastName;
                     db.getSignature(req.session.userId).then(results => {
-                        res.redirect('/profile');
+                        res.redirect('/thanks');
                     });
                 } else {
                     res.render('login', {
@@ -185,6 +117,68 @@ app.post('/login', (req, res) => {
                     error: 'error',
                 }));
     });
+});
+
+//render petition page
+app.get('/petition', (req, res) => {
+    res.render('petition', {
+        layout: 'main',
+    });
+});
+
+app.post('/petition', (req, res) => {
+    console.log('req.body.signature:', req.body.signature);
+    return db
+        .createSignature(
+            //no longer need to pass the first and last to query
+            // req.body.firstName,
+            // req.body.lastName,
+
+            req.body.signature,
+            req.session.userId,
+        )
+        .then(results => {
+            // req.session.firstName = req.body.firstName;
+            // req.session.lastName = req.body.lastName;
+            req.session.signatureId = results.rows[0].id;
+            console.log('results.rowsfqfqqfqf:', results.rows);
+
+            res.redirect('/thanks');
+        })
+        .catch(err => {
+            console.log('err:', err);
+            res.render('petition', {
+                layout: 'main',
+                error: 'error',
+            });
+        });
+});
+
+//render thank you page
+app.get('/thanks', (req, res) => {
+    return db.getSignature(req.session.userId).then(results => {
+        console.log('results:', results);
+        res.render('thanks', {
+            layout: 'main',
+            signature: results.rows[0],
+        });
+    });
+});
+
+//render signatures page
+app.get('/signatures', (req, res) => {
+    db
+        .getSignatures()
+        .then(results => {
+            res.render('signatures', {
+                layout: 'main',
+                listNames: results.rows,
+            });
+            console.log(results.rows);
+        })
+        .catch(error => {
+            console.log('error:', error);
+        });
 });
 
 // renders form for data that goes into  new user_profiles table
@@ -212,8 +206,8 @@ app.post('/profile', (req, res) => {
 });
 
 app.get('/signatures/:city', (req, res) => {
-    return db.getCity(re.params.city).then(results => {
-        res.render('signerscity', {
+    return db.getCity(req.params.city).then(results => {
+        res.render('signatures', {
             layout: 'main',
             listNames: results.rows,
         });

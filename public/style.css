@@ -1,5 +1,10 @@
-* {
-    background-color: purple;
+body{
+
+    background-image: url(architecture-berlin-europe-1255149.jpg) ;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 h1 {
@@ -25,13 +30,11 @@ input {
 
 #button {
     margin-top: 50px;
-    height: 60px;
-    width: 80px;
-    border-radius: 50px;
-    border: white 1px solid;
-    background-color: black;
-    font-weight: bolder;
-    font-size: 10px;
-    color: white;
+    border-radius:12px 0 12px 0;
+	background: #478bf9;
+	border:none;
+	color:yellow;
+	font:bold 12px Verdana;
+	padding:6px 0 6px 0;
     margin-left: 580px;
 }

@@ -33,11 +33,10 @@
     canvas.addEventListener(`mousemove`, draw);
 
     canvas.addEventListener(`mouseup`, () => {
+        input.value = canvas.toDataURL();
+        console.log(input.value);
         userDrawing = false;
     });
 
-    register.addEventListener(`click`, () => {
-        input.value = canvas.toDataURL();
-        console.log(input.value);
-    });
+    register.addEventListener(`click`, () => {});
 })();
