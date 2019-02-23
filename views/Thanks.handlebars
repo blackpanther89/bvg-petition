@@ -1,17 +1,24 @@
 <h1>Thank you for your signature!</h1>
+<br>
+<br>
 
 
 <body>
-
-
-
-
 <a class="h" href="/signatures">See all signers</a>
 <br>
+<br>
 <a class="h" href="/update">Edit your profile</a>
+<br>
+<br>
+<a class="h" href="/logout">Logout</a>
+<br>
+<br>
 
 <img src={{signature}} alt="">
+
 <form method="POST">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <button id="buttona" type="submit">Delete your signature</button>
+
 </form>
 </body>

@@ -41,7 +41,7 @@ app.use(function(req, res, next) {
 devRoutes(app);
 
 // PROFILES
-
+//=========================================================//
 app.get('/wintergreen-petition', (req, res) => {
     res.render('home', {
         message: 'Welcome',
@@ -49,6 +49,7 @@ app.get('/wintergreen-petition', (req, res) => {
         layout: 'main',
     });
 });
+//===========================================================//
 
 //render the registration page
 app.get('/registration', (req, res) => {
@@ -87,7 +88,7 @@ app.post('/registration', (req, res) => {
 
     // console.log('error:', error);
 });
-
+//=======================================================================//
 //Renders the log in page
 app.get('/login', (req, res) => {
     res.render('login', {
@@ -134,7 +135,7 @@ app.post('/login', (req, res) => {
                 }));
     });
 });
-
+//===============================================================//
 //render petition page
 app.get('/petition', helpers.gotoThanksIfSigned, (req, res) => {
     res.render('petition', {
@@ -169,6 +170,7 @@ app.post('/petition', (req, res) => {
             });
         });
 });
+//=====================================================================//
 
 //render thank you page
 app.get('/thanks', (req, res) => {
@@ -179,13 +181,13 @@ app.get('/thanks', (req, res) => {
         });
     });
 });
-
+//===================================================================//
 //render signatures page
 app.get('/signatures', (req, res) => {
     db
         .getSignaturesPlus()
         .then(results => {
-            // console.log('results.rows:', results.rows);
+            console.log('results.rows:', results.rows);
             res.render('signatures', {
                 layout: 'main',
                 listNames: results.rows,
@@ -196,7 +198,7 @@ app.get('/signatures', (req, res) => {
             // console.log('error:', error);
         });
 });
-
+//================================================================//
 // renders form for data that goes into  new user_profiles table
 app.get('/profile', (req, res) => {
     res.render('profile', {
@@ -221,6 +223,8 @@ app.post('/profile', (req, res) => {
         });
 });
 
+//===========================================================//
+
 app.get('/signatures/:city', (req, res) => {
     return db.getCity(req.params.city).then(results => {
         res.render('signatures', {
@@ -229,14 +233,88 @@ app.get('/signatures/:city', (req, res) => {
         });
     });
 });
+//================================================================//
 app.get('/update', (req, res) => {
-    res.render('update', {
-        layout: 'main',
+    db.getSignaturesPlus(req.session.userId).then(results => {
+        res.render('update', {
+            layout: 'main',
+            pre: results.rows,
+        });
     });
 });
+
+app.post('/update', (req, res) => {
+    console.log('req.body:', req.body);
+    if (req.body.password) {
+        bcrypt.hashPassword(req.body.password).then(hashPassword => {
+            db.editWithPassword(
+                req.body.firstName,
+                req.body.lastName,
+                req.body.email,
+                hashPassword,
+                req.session.userId,
+            );
+            db
+                .updateProfile(
+                    req.body.age,
+                    req.body.city,
+                    req.body.url,
+                    req.session.userId,
+                )
+                .then(results => {
+                    res.redirect('/thanks');
+                })
+                .catch(error => {
+                    console.log('error:', error);
+                    res.render('update', {
+                        layout: 'main',
+                        error: e.message,
+                    });
+                });
+        });
+    } else {
+        db.editWithoutPassword(
+            req.body.firstName,
+            req.body.lastName,
+            req.body.email,
+            req.session.userId,
+        );
+        db
+            .updateProfile(
+                req.body.age,
+                req.body.city,
+                req.body.url,
+                req.session.userId,
+            )
+            .then(results => {
+                res.redirect('/thanks');
+            })
+            .catch(error => {
+                console.log('error:', error);
+                res.render('update', {
+                    layout: 'main',
+                    error: e.message,
+                });
+            });
+    }
+});
+
+//================================================================//
+
 app.get('/logout', (req, res) => {
     req.session = null;
     res.redirect('/registration');
 });
-
+//==============================================================//
+app.post('/thanks', (req, res) => {
+    return db
+        .deleteSig(req.session.userId)
+        .then(data => {
+            console.log(data);
+            res.redirect('/petition');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+});
 app.listen(process.env.PORT || 8080, () => console.log('Petition listening!'));

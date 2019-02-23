@@ -6,12 +6,7 @@ var db = spicedPg(
         'postgres:postgres:postgres@localhost:5432/wintergreen-petition',
 );
 
-exports.createSignature = function createSignature(
-    // firstName,
-    // lastName,
-    signature,
-    user_id,
-) {
+exports.createSignature = function createSignature(signature, user_id) {
     return db.query(
         'INSERT INTO signatures (signature, user_id) VALUES($1, $2) RETURNING id',
         [signature, user_id],
@@ -30,14 +25,19 @@ module.exports.getSignature = function getSignature(id) {
     return db.query('SELECT * FROM signatures WHERE user_id = $1', [id]);
 };
 
-exports.register = function(firstName, lastName, email, password) {
+module.exports.register = function register(
+    firstName,
+    lastName,
+    email,
+    password,
+) {
     return db.query(
         `INSERT INTO users (firstName, lastName, email, password)
         VALUES ($1, $2, $3, $4)  RETURNING id, firstName, lastName`,
         [firstName || null, lastName || null, email || null, password || null],
     );
 };
-exports.getEmail = function getEmail(email) {
+module.exports.getEmail = function getEmail(email) {
     return db.query(
         `SELECT firstName, lastName, password, users.id, signatures.id
         AS sigiD
@@ -48,7 +48,7 @@ exports.getEmail = function getEmail(email) {
     );
 };
 
-exports.userInfo = function userInfo(age, city, url, user_id) {
+module.exports.userInfo = function userInfo(age, city, url, user_id) {
     return db.query(
         `INSERT INTO user_profiles (age, city, url, user_id)
         VALUES ($1, $2, $3, $4) RETURNING id`,
@@ -56,7 +56,7 @@ exports.userInfo = function userInfo(age, city, url, user_id) {
     );
 }; //insert for new user_profiles
 
-exports.getCity = function getCity(city) {
+module.exports.getCity = function getCity(city) {
     return db.query(
         `SELECT
         users.firstName
@@ -70,27 +70,63 @@ exports.getCity = function getCity(city) {
         [city],
     );
 };
-exports.update = function update() {
-    return db.query([]);
+module.exports.updateProfile = function updateProfile(age, city, url, user_id) {
+    return db.query(
+        `INSERT INTO user_profiles (age, city, url, user_id)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (user_id)
+        DO UPDATE SET age = $1, city = $2, url = $3
+        RETURNING id`,
+    ), [age, city, url, user_id];
 };
 
-exports.getUsers = function getUsers() {
+module.exports.editWithPassword = function editWithPassword(
+    firstName,
+    lastName,
+    email,
+    password,
+    user_id,
+) {
+    return db.query(
+        `UPDATE users
+        SET firstName = $1, lastName = $2, email = $3, password = $4
+        WHERE id = $5`,
+        [firstName, lastName, email, password, user_id],
+    );
+};
+module.exports.editWithoutPassword = function editWithoutPassword(
+    firstName,
+    lastName,
+    email,
+    user_id,
+) {
+    return db.query(
+        `UPDATE users SET firstName =$1, lastName=$2, email=$3
+        WHERE id=$4 `,
+        [firstName, lastName, email, user_id],
+    );
+};
+module.exports.deleteSig = function deleteSig(signature) {
+    return db.query(`DELETE FROM signatures WHERE user_id = $1`, [signature]);
+};
+//===============================================================//
+module.exports.getUsers = function getUsers() {
     return db.query(`SELECT * FROM users`);
 };
 
-exports.getSignatures = function getSignatures() {
+module.exports.getSignatures = function getSignatures() {
     return db.query(`SELECT * FROM signatures`);
 };
 
-exports.getProfiles = function getProfiles() {
+module.exports.getProfiles = function getProfiles() {
     return db.query(`SELECT * FROM user_profiles`);
 };
 
-exports.dropProfiles = function dropProfiles() {
+module.exports.dropProfiles = function dropProfiles() {
     return db.query(`DROP TABLE IF EXISTS user_profiles`);
 };
 
-exports.createProfiles = function createProfiles() {
+module.exports.createProfiles = function createProfiles() {
     return db.query(
         `CREATE TABLE user_profiles(
         id  SERIAL primary key,
@@ -101,7 +137,7 @@ exports.createProfiles = function createProfiles() {
     );
 };
 
-exports.refresh = function refresh() {
+module.exports.refresh = function refresh() {
     return db.query(
         `DROP TABLE IF EXISTS signatures;
     DROP TABLE IF EXISTS user_profiles;
@@ -130,6 +166,6 @@ exports.refresh = function refresh() {
          email VARCHAR(255) not null unique,
          password VARCHAR(255) not null
 
-     );`,
+     )`,
     );
 };

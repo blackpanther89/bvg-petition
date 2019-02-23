@@ -2,10 +2,11 @@
 <form class="" method="POST">
     <br>
     <br>
-    <input type="text" value="{{firstname}}" name="firstname" placeholder="First Name">
+    <!-- {{#pre}} -->
+    <input type="text" value="{{firstname}}" name="firstName" placeholder="First Name">
     <br>
 
-    <input type="text" value="{{lastname}}" name="lastname" placeholder="Last Name">
+    <input type="text" value="{{lastname}}" name="lastName" placeholder="Last Name">
     <br>
 
     <input type="text" value="{{email}}" name="email" placeholder="Email Adress">
@@ -22,9 +23,10 @@
 
     <input type="url" value="{{#if url}}{{url}}{{/if}}" name="url" placeholder="Homepage">
     <br>
-
+    <!-- {{/pre}} -->
     <input class="input" type="hidden" name="_csrf" value="{{csrfToken}}">
     <br>
+
 
     <button id="button"> UPDATE</button>
 </form>
