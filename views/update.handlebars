@@ -1,8 +1,10 @@
 <h1>Edit your profile</h1>
+
 <form class="" method="POST">
+
     <br>
     <br>
-    <!-- {{#pre}} -->
+{{#data}}
     <input type="text" value="{{firstname}}" name="firstName" placeholder="First Name">
     <br>
 
@@ -23,10 +25,11 @@
 
     <input type="url" value="{{#if url}}{{url}}{{/if}}" name="url" placeholder="Homepage">
     <br>
-    <!-- {{/pre}} -->
-    <input class="input" type="hidden" name="_csrf" value="{{csrfToken}}">
     <br>
-
+{{/data}}
 
     <button id="button"> UPDATE</button>
+
+    <input class="input" type="hidden" name="_csrf" value="{{csrfToken}}">
+
 </form>

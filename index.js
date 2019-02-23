@@ -238,7 +238,7 @@ app.get('/update', (req, res) => {
     db.getSignaturesPlus(req.session.userId).then(results => {
         res.render('update', {
             layout: 'main',
-            pre: results.rows,
+            data: results.rows[0],
         });
     });
 });
