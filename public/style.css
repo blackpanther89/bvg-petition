@@ -12,11 +12,16 @@ body {
     -o-background-size: cover;
     background-size: cover;
 }
+h2{
+    font: 20px Verdana ;
+    color: darkorange;
 
+
+}
 h1 {
-    font: 20px Verdana;
+    font: 20px Verdana ;
     margin-top: 0px;
-    background-color: yellow;
+    background-color: rgb(232, 207, 34);
     line-height: 45px;
     text-align: center;
 }
@@ -43,7 +48,6 @@ input {
 }
 
 .h {
-    
     font-family: Verdana;
     color: black;
 }
@@ -58,7 +62,7 @@ input {
 #button {
     margin-top: 50px;
     border-radius: 12px 0 12px 0;
-    background: yellow;
+    background-color: rgb(232, 207, 34);
     border: none;
     color: black;
     width: 100px;
@@ -70,13 +74,26 @@ input {
 #sign {
     margin-top: 50px;
     border-radius: 12px 0 12px 0;
-    background: yellow;
-    border: none;
+    background-color: rgb(232, 207, 34);
     color: black;
-    width: 150px;
+    width: 100px;
     font: bold 12px Verdana;
     padding: 6px 0 6px 0;
     border-bottom: : 20px;
+}
+#buttona{
+    margin-top: 50px;
+    border-radius: 12px 0 12px 0;
+    background-color: rgb(232, 207, 34);
+    color: black;
+    width: 170px;
+    font: bold 12px Verdana;
+    padding: 6px 0 6px 0;
+    border-bottom: : 20px;
+}
+
+.city {
+    color: orange;
 }
 
 footer {

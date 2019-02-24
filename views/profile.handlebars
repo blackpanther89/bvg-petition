@@ -1,9 +1,10 @@
 <h1>Now please tell us just a little bit more about yourself.</h1>
+<br>
 
 {{#if error}}
-<h2 class="error">  {{error}}  </h2>
+<h2 class="error"> Please fill out this field! </h2>
 
-    {{/if}}</h2>
+    {{/if}}
 
 <form class=""  method="POST">
 <input type="hidden" name="_csrf" value="{{csrfToken}}">
@@ -19,5 +20,5 @@
 <input type="url" name="homepage" value="" placeholder="Homepage">
 
 
-<button type="submit" id="sign">Sign this petition</button>
+<button type="submit" id="sign">Register</button>
 </form>

@@ -12,7 +12,18 @@ exports.createSignature = function createSignature(signature, user_id) {
         [signature, user_id],
     );
 };
-module.exports.getSignaturesPlus = function getSignaturesPlus() {
+module.exports.getSignaturesPlus = function getSignaturesPlus(id) {
+    return db.query(
+        `SELECT * FROM signatures
+         LEFT JOIN users ON signatures.user_id = users.id
+         LEFT JOIN user_profiles ON signatures.user_id = user_profiles.user_id
+         WHERE users.id= $1
+         `,
+        [id],
+    );
+};
+
+module.exports.getNames = function getNames() {
     return db.query(
         `SELECT * FROM signatures
          LEFT JOIN users ON signatures.user_id = users.id
@@ -20,7 +31,6 @@ module.exports.getSignaturesPlus = function getSignaturesPlus() {
          `,
     );
 };
-
 module.exports.getSignature = function getSignature(id) {
     return db.query('SELECT * FROM signatures WHERE user_id = $1', [id]);
 };
@@ -75,7 +85,7 @@ module.exports.updateProfile = function updateProfile(age, city, url, user_id) {
         `INSERT INTO user_profiles (age, city, url, user_id)
         VALUES ($1, $2, $3, $4)
         ON CONFLICT (user_id)
-        DO UPDATE SET age = $1, city = $2, url = $3
+        DO UPDATE SET age = $1, city = $2, url = $3, user_id=$4
         RETURNING id`,
     ), [age, city, url, user_id];
 };

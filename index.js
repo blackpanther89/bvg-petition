@@ -119,7 +119,7 @@ app.post('/login', (req, res) => {
                         .catch(e =>
                             res.render('login', {
                                 layout: 'main',
-                                error: e.message,
+                                error: 'error',
                             }));
                 } else {
                     res.render('login', {
@@ -131,7 +131,7 @@ app.post('/login', (req, res) => {
             .catch(e =>
                 res.render('login', {
                     layout: 'main',
-                    error: e.message,
+                    error: 'error',
                 }));
     });
 });
@@ -185,7 +185,7 @@ app.get('/thanks', (req, res) => {
 //render signatures page
 app.get('/signatures', (req, res) => {
     db
-        .getSignaturesPlus()
+        .getNames()
         .then(results => {
             console.log('results.rows:', results.rows);
             res.render('signatures', {
@@ -218,7 +218,7 @@ app.post('/profile', (req, res) => {
             // console.log(error);
             res.render('profile', {
                 layout: 'main',
-                error: e.message,
+                error: 'error',
             });
         });
 });
@@ -247,20 +247,23 @@ app.post('/update', (req, res) => {
     console.log('req.body:', req.body);
     if (req.body.password) {
         bcrypt.hashPassword(req.body.password).then(hashPassword => {
-            db.editWithPassword(
-                req.body.firstName,
-                req.body.lastName,
-                req.body.email,
-                hashPassword,
-                req.session.userId,
-            );
             db
-                .updateProfile(
-                    req.body.age,
-                    req.body.city,
-                    req.body.url,
+                .editWithPassword(
+                    req.body.firstName,
+                    req.body.lastName,
+                    req.body.email,
+                    hashPassword,
                     req.session.userId,
                 )
+                .then(results => {
+                    return;
+                    db.updateProfile(
+                        req.body.age,
+                        req.body.city,
+                        req.body.url,
+                        req.session.userId,
+                    );
+                })
                 .then(results => {
                     res.redirect('/thanks');
                 })
@@ -268,24 +271,26 @@ app.post('/update', (req, res) => {
                     console.log('error:', error);
                     res.render('update', {
                         layout: 'main',
-                        error: e.message,
+                        error: 'error',
                     });
                 });
         });
     } else {
-        db.editWithoutPassword(
-            req.body.firstName,
-            req.body.lastName,
-            req.body.email,
-            req.session.userId,
-        );
         db
-            .updateProfile(
-                req.body.age,
-                req.body.city,
-                req.body.url,
+            .editWithoutPassword(
+                req.body.firstName,
+                req.body.lastName,
+                req.body.email,
                 req.session.userId,
             )
+            .then(results => {
+                db.updateProfile(
+                    req.body.age,
+                    req.body.city,
+                    req.body.url,
+                    req.session.userId,
+                );
+            })
             .then(results => {
                 res.redirect('/thanks');
             })
@@ -293,7 +298,7 @@ app.post('/update', (req, res) => {
                 console.log('error:', error);
                 res.render('update', {
                     layout: 'main',
-                    error: e.message,
+                    error: 'error',
                 });
             });
     }

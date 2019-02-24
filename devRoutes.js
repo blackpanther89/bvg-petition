@@ -38,9 +38,9 @@ module.exports = function(app) {
             .catch(e => res.send(e.message));
     });
 
-    app.get('/getSignaturesPlus', (req, res) => {
+    app.get('/getNames', (req, res) => {
         return db
-            .getSignaturesPlus()
+            .getNames()
             .then(data => res.send(data.rows))
             .catch(e => res.send(e.message));
     });
