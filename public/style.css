@@ -14,12 +14,17 @@ body {
 }
 h2{
     font: 20px Verdana ;
-    color: darkorange;
-
+    color: rgb(255, 128, 0);
 
 }
-h1 {
+h3{
     font: 20px Verdana ;
+    color: rgb(194, 11, 1)
+
+}
+
+h1 {
+font-family:'Ubuntu', sans-serif;
     margin-top: 0px;
     background-color: rgb(232, 207, 34);
     line-height: 45px;
@@ -93,7 +98,13 @@ input {
 }
 
 .city {
-    color: orange;
+    color: rgb(255, 128, 0)
+}
+li{
+list-style-type: none;
+font: 15px Verdana;
+font-style: italic;
+
 }
 
 footer {

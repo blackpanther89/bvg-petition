@@ -226,7 +226,7 @@ app.post('/profile', (req, res) => {
 //===========================================================//
 
 app.get('/signatures/:city', (req, res) => {
-    return db.getCity(req.params.city).then(results => {
+    db.getCity(req.params.city).then(results => {
         res.render('signatures', {
             layout: 'main',
             listNames: results.rows,
