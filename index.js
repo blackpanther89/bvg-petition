@@ -175,7 +175,7 @@ app.post('/petition', (req, res) => {
 //render thank you page
 app.get('/thanks', (req, res) => {
     return db.getSignature(req.session.userId).then(results => {
-        res.render('thanks', {
+        res.render('thankyou', {
             layout: 'main',
             signature: results.rows[0].signature,
         });
