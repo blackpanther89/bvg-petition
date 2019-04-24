@@ -64,7 +64,7 @@ module.exports.userInfo = function userInfo(age, city, url, user_id) {
         VALUES ($1, $2, $3, $4) RETURNING id`,
         [age, city, url, user_id],
     );
-}; //insert for new user_profiles
+};
 
 module.exports.getCity = function getCity(city) {
     return db.query(
@@ -87,7 +87,7 @@ module.exports.updateProfile = function updateProfile(age, city, url, user_id) {
         ON CONFLICT (user_id)
         DO UPDATE SET age = $1, city = $2, url = $3, user_id=$4
         RETURNING id`,
-    ), [age, city, url, user_id];
+     [age, city, url, user_id]);
 };
 
 module.exports.editWithPassword = function editWithPassword(
